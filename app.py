@@ -1,4 +1,4 @@
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
@@ -10,9 +10,12 @@ from langchain.callbacks import get_openai_callback
 
 
 def main():
-    load_dotenv()
+    #load_dotenv()
     st.set_page_config(page_title="Ask your PDF")
     st.header("Ask your PDF 💬")
+    with st.sidebar:
+        OPENAI_API_KEY=st.text_input("AI API Key", type="password")
+        #"[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
     
     # upload file
     pdf = st.file_uploader("Upload your PDF", type="pdf")
@@ -42,7 +45,7 @@ def main():
       if user_question:
         docs = knowledge_base.similarity_search(user_question)
         
-        llm = OpenAI()
+        llm = OpenAI(temperature=0.0, openai_api_key=openai_api_key)
         chain = load_qa_chain(llm, chain_type="stuff")
         with get_openai_callback() as cb:
           response = chain.run(input_documents=docs, question=user_question)
